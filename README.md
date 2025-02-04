@@ -2,7 +2,7 @@
 # General
 This file holds the code for a Neural Network algorithm written in C. Note that the code is not written in vector/matrix format, but in an "object" manner (all ideas are represented by different structs holding their info). This will have a negative effect on performance.
 
-The file expects the input to be numeric and organised in a csv such that the "true" output is at the end of each line. It also expects that the number of output data points is the same as the number of Output Nodes in the Neural Network.
+The file expects the input to be numeric and organised in a csv such that the "true" output is at the end of each line. It also expects that the number of output data points is the same as the number of Output Nodes in the Neural Network
 
 
 # Building using Makefile
