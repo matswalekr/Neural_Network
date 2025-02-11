@@ -177,3 +177,66 @@ void free_state(STATE* state_to_free){
     free(state_to_free);
 
 }
+
+/*
+Function to save the data of the neural */
+int save_network_to_csv(neuron** network_arr, char* filename){
+    FILE* csv_file = fopen(filename, "w");
+    if (!csv_file){
+        // Case when the file could not be opened
+        printf("Could not open the file %s as csv.\n", filename);
+        return FILE_ERROR;
+    }
+
+    /*********************************************************
+     * 1. Write the basic architecture of the Neural Network *
+     *********************************************************/
+    // Write the first layer
+    fprintf(csv_file, "%zu", NEURON_NUMBERS[0]);
+    for (size_t i = 1; i < NUMBER_LAYERS; i++){
+        // Write all other layers
+        fprintf(csv_file, ",%zu", NEURON_NUMBERS[i]);
+    }
+    // New line
+    fprintf(csv_file, "\n");
+
+    /******************************************
+     * 2. Write the specifics of every neuron *
+     ******************************************/
+    /*
+    Note that the data is stored as follows:
+    1. Bias of the Neuron
+    2. Pos of the first connection
+    3. Weight of the first connection
+    4. Pos of the second connection
+    5. Weigth of the third connection
+    etc. 
+    */
+
+    for (size_t i = 0; i < LENGTH_NETWORK; i++){
+        neuron* this_neuron = network_arr[i];
+
+        // 1. Write the bias
+        fprintf(csv_file,"%lf", this_neuron->bias);
+
+        // 2. Write all the connections
+        node_linked_list_connection* next_layer = this_neuron->next_layer;
+        while (next_layer){
+            // Write the position
+            fprintf(csv_file,",%zu",next_layer->data->pos);
+            // Write the weight
+            fprintf(csv_file,",%lf",next_layer->weight);
+            // Move to the next node
+            next_layer = next_layer->next;
+        }
+        
+        // 3. New Line
+        fprintf(csv_file,"\n");
+    }
+    
+
+    // Close the scv file
+    fclose(csv_file);
+
+    return SUCCESSFULL_EXECUTION_CODE;
+}
