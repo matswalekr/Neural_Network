@@ -64,7 +64,7 @@ The following functions and their derivatives are available as activation functi
 - **relu**
 - **leaky relu**
 
-## Cost functions Functions
+## Cost Functions
 The following functions and their derivatives are available as cost functions:
 
 - **mean squared error**
