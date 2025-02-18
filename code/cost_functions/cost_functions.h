@@ -6,6 +6,9 @@ Is prohibited from using any other header files*/
 #ifndef COST_FUNCTIONS_H
 #define COST_FUNCTIONS_H
 
+/****************************************
+ * Continuous data cost/error functions *
+ ****************************************/
 
 double mean_squared_error(double, double);
 
@@ -18,6 +21,9 @@ double absolute_error(double, double);
 double absolute_error_der(double, double);
 
 
+/***************************************
+ * Classification cost/error functions *
+ ***************************************/
 
 double cross_entropy_cost(double, double);
 
