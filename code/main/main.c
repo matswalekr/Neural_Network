@@ -176,12 +176,6 @@ int run_neural_network(void){
 
     printf("\nThe minimum average cost was %f in generation %i.\n", min_av_cost, best_generation);
 
-    // Restore the best state
-    restore_state(network_array, best_state);
-
-    printf("Best Network:\n\n");
-    print_network(network_array);
-
 free_thread_args_arr:
     free(thread_args_arr);
 free_threads:

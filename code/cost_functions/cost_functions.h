@@ -6,22 +6,34 @@ Is prohibited from using any other header files*/
 #ifndef COST_FUNCTIONS_H
 #define COST_FUNCTIONS_H
 
-double squared_error(double**, double**, size_t);
-//double mean_squared_error(double**, double**, size_t);
+
 double mean_squared_error(double, double);
+
 double mean_squared_error_der(double, double);
 
-double absolute_error(double**, double**, size_t);
-double mean_absolute_error(double**, double**, size_t);
 
-double cross_entropy_cost(double**, double**, size_t);
 
-double exponential_cost(double**, double**, float, size_t);
+double absolute_error(double, double);
 
-double kl_divergence(double**, double**, size_t);
+double absolute_error_der(double, double);
 
-double generalised_kl_divergence(double**, double**, size_t);
-double itakura_saito_distance(double**, double**, size_t);
+
+
+double cross_entropy_cost(double, double);
+
+double cross_entropy_cost_der(double, double);
+
+
+
+double exponential_cost(double, double);
+
+double exponential_cost_der(double, double);
+
+
+double kl_divergence(double, double);
+
+double kl_divergence_der(double, double);
+
 
 double calc_average_cost(void);
 

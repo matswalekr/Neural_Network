@@ -18,152 +18,93 @@ Is prohibited from using any other header files.
 // Include structs for access to SUM_COST
 #include "../structs/structs.h"
 
+
+double mean_squared_error(double act, double pred){
+    // Mean Squared Error
+    // Used for regression
+    //+ Turns individual errors into absolute values by squaring them
+    //+ Large errors get amplified by squaring, while smaller ones get reduced.
+    double error = act - pred;
+    return (error * error) / 2;
+}
+
 double mean_squared_error_der(double act, double pred){
     return (pred - act);
 }
 
 
-double squared_error(double** actual_output, double** pred_output, size_t num_input){
-    // Mean Squared Error
-    // Used for regression
-    //+ Turns individual errors into absolute values by squaring them
-    //+ Large errors get amplified by squaring, while smaller ones get reduced.
-    // Version returning the absolute error (suited for multithreading)
-    
 
-    double total_error = 0;
-
-    for (size_t i = 0; i < num_input; i++) {
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            double error = actual - predicted;
-            total_error += error * error;
-        }
-    }
-    return total_error;
-}
-
-double mean_squared_error(double act, double pred){
-    double error = act - pred;
-    return (error * error) / 2;
-}
-/*
-double mean_squared_error(double** actual_output, double** pred_output, size_t num_input) {
-    // Mean Squared Error
-    // Used for regression
-    //+ Turns individual errors into absolute values by squaring them
-    //+ Large errors get amplified by squaring, while smaller ones get reduced
-    // Version returning the mean squared error (not suited for multithreading)
-
-    return squared_error(actual_output, pred_output, num_input) / num_input;
-}
-*/
-
-double absolute_error(double** actual_output, double** pred_output, size_t num_input){
-    // Mean Absolute Error
+double absolute_error(double act, double pred){
+    // Absolute Error
     //+ Turns individual errors into their absolute values
     //- Very slow learning process compared to MSE
     // Version returning the absolute error (suited for multithreading)
-    double total_error = 0;
+    return (act - pred);
+}
 
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            double error = actual - predicted;
-            total_error += fabs(error);
-        }
+double absolute_error_der(double act, double pred){
+    if (act > pred){
+        return -1;
     }
-    return total_error;
-}
+    if (act < pred){
+        return 1;
+    }
+    // If act == pred, even if undefined, the derivative is defined as 0
+    return 0; 
+} 
 
-double mean_absolute_error(double** actual_output, double** pred_output, size_t num_input){
-    // Mean Absolute Error
-    //+ Turns individual errors into their absolute values
-    //- Very slow learning process compared to MSE
-    // Version returning the mean absolute error (not suited for multithreading)
 
-    return absolute_error(actual_output, pred_output, num_input)/ num_input;
-}
 
-double cross_entropy_cost(double** actual_output, double** pred_output, size_t num_input){
+double cross_entropy_cost(double act, double pred){
     // Cross Entropy Cost
     // Used for classification
-    double total_cost = 0.0;
-
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double p = fmax(fmin(pred_output[i][output_ptr], 1.0 - 1e-12), 1e-12); // clamp
-            double y = actual_output[i][output_ptr];
-
-            total_cost += y * log(p) + (1 - y) * log(1 - p);
-        }
-    }
-    return -total_cost; // or -total_cost / SIZE_TRAIN, if you want average
+    // As a result, act can only take the value 0 or 1
+     if (act == 0){
+        return -log(1 - pred);
+     }
+     if (act == 1){
+        return -log(pred);
+     }
+     // Else, nor 0 or 1 have been entered --> error condition
+     perror("A value different than 0 or 1 was passed to the cross entropy cost designed for classification.\n");
+     exit(OTHER_ERROR);
 }
 
-double exponential_cost(double** actual_output, double** pred_output, float n, size_t num_input){
+double cross_entropy_cost_der(double act, double pred){
+         if (act == 0){
+        return -1/(1-pred);
+     }
+     if (act == 1){
+        return -1/pred;
+     }
+     // Else, nor 0 or 1 have been entered --> error condition
+     perror("A value different than 0 or 1 was passed to the cross-entropy cost derivative function designed for classification.\n");
+     exit(OTHER_ERROR);
+}
+
+
+
+double exponential_cost(double act, double pred){
     // Exponential Cost
-    double total_squared_error = 0;
-
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            double error = actual - predicted;
-            total_squared_error += error * error;
-        }
-    }
-    return fabs(n * exp((1/n) * total_squared_error));
+    // Of form e^(-pred*act) 
+   return exp(-pred*act);
 }
 
-double kl_divergence(double** actual_output, double** pred_output, size_t num_input){
+double exponential_cost_der(double act, double pred){
+    return -act * exponential_cost(act, pred);
+}
+
+
+double kl_divergence(double act, double pred){
     //Kullback-Leiber Divergence
-    double total_cost = 0;
-
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            total_cost += (float) (actual * log(actual/predicted));
-        }
-    }
-    return fabs(total_cost);
+    return act * log(act/pred);
 }
 
-double generalised_kl_divergence(double** actual_output, double** pred_output, size_t num_input){
-    //Generalised Kullback-Leiber Divergence
-    double total_kl = 0;
-    double total_actual = 0;
-    double total_pred = 0;
-
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            total_kl += actual * log(actual/predicted);
-            total_actual += actual;
-            total_pred += predicted;
-        }
-    }
-    return fabs(total_kl - total_actual - total_pred);
+double kl_divergence_der(double act, double pred){
+    return -(act/pred) + ((1-act)/(1-pred));
 }
 
-double itakura_saito_distance(double** actual_output, double** pred_output, size_t num_input){
-    // Itakura-Saito Distance
-    double total_cost = 0;
 
-    for(size_t i = 0; i < num_input; i++){
-        for (size_t output_ptr = 0; output_ptr < NUM_OUTPUT; output_ptr++){
-
-            double predicted = pred_output[i][output_ptr];
-            double actual = actual_output[i][output_ptr];
-            total_cost += actual/predicted - log(actual/predicted) - 1;
-        }
-    }
-    return fabs(total_cost);
-}
 
 
 /*
