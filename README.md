@@ -52,4 +52,23 @@ Updates are performed in a big batch once for every epoch (after the entire trai
 
 ## Optimisations
 To speed up the process, the training data is broken into smaller pieces and processed using multi-threading. Note, that only the [feed_forward](code/feed_forward/feed_forward.c) algorithm benefits from this speed-up, as it is the main bottleneck for big training datasets.  
-The code is optimised for cache sizes of 128 bytes (If necessary change CACHE_LINE_LENGTH in [config.h](configurations/config/config.h) ).
+The code is optimised for cache sizes of 128 bytes (If necessary change CACHE_LINE_LENGTH in [config.h](configurations/config/config.h)).
+
+# Available functions
+
+## Activation Functions
+The following functions and their derivatives are available as activation functions:
+
+- **sigmoid**
+- **tanh**
+- **relu**
+- **leaky relu**
+
+## Cost functions Functions
+The following functions and their derivatives are available as cost functions:
+
+- **mean squared error**
+- **absolute error**
+- **cross-entropy cost**
+- **exponential cost**
+- **KL divergence**
