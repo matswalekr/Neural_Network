@@ -1,58 +1,63 @@
 
 # General
-This file holds the code for a Neural Network algorithm written in C. Note that the code is not written in vector/matrix format, but in an "object" manner (all ideas are represented by different structs holding their info). This will have a negative effect on performance.
+This respository contains the code for a Neural Network algorithm written in C. 
 
-The file expects the input to be numeric and organised in a csv such that the "true" output is at the end of each line. It also expects that the number of output data points is the same as the number of Output Nodes in the Neural Network
-
+The file expects the input to be numeric and organised in a .csv file, where each row corresponds to one training example with the final column being the ground-truth label to predict. The number of output data points must match the number of output nodes specified in the configuration file.
 
 # Building using Makefile
-For normal running:  
+Standard built:
+
 compile using **make** or **make release**  
 When running it, include the path to the csv as command line argument.
 
-For testing a certain file xyz:  
-compile using **make test_xyz**  (Note that a xyz/test/test_xyz file needs to exist for this to work)
 
-For demo with the demo file [demo.csv](code/main/demo.csv):  
+Testing a module xyz:  
+compile using **make test_xyz**  (Note that a code/xyz/test/test_xyz file needs to exist for this to work)
+
+Demonstrating with the demo data [demo.csv](code/main/demo.csv):  
 compile using **make demo**
 
 # Organisation of code
-The file is organised in 3 main building blocks:
-- **Configurations** 
-- **Code** 
-- **Builds**
+The project contains 3 main building blocks:
+- **Configurations** - defines the architecture and parameters
+- **Code** - holds the logic for the algorithmic implementation and CSV parser
+- **Builds** - stores the compiled executables
+
+# Implementation
+Unlike the common vectorised implementations, this project employs a "object-oriented style". Conceptual entities are stored in their own structs. While this improves expressiveness and modularity, it reduces performance. 
 
 ## Configurations folder
-The **configurations folder** holds the different configurations for the Neural Network. It is in the 
-[config.c](configurations/config/config.c) 
-and [config.h](configurations/config/config.h) 
-files that the architecture of the Neural Network and the different constants/parameters can be accessed and changed.
-
-**This file may be changed during normal running!**
+- Located in [config.c](configurations/config/config.c) and [config.h](configurations/config/config.h) 
+- Defines the architecture, constants and hyperparameters of the Neural Network
+- Changes may be made to parameters to adapt the model
 
 
 ## Code folder
-The **code folder** holds the different algorithms for the Neural Network in their respective files, such as 
-[feed_forward.c](code/feed_forward/feed_forward.c), [gradient_descent.c](code/gradient_descent/gradient_descent.c) or a [csv reader](code/process_input/process_input.c). 
-It also exposes various cost functions and their derivatives as well as activation functions that can be used. Note that up to this point, 
-the algorithm only supports one output neuron.  
-As a convention, every file has its own testing file.
+- Implements the necessary algorithms, including [feed_forward.c](code/feed_forward/feed_forward.c), [gradient_descent.c](code/gradient_descent/gradient_descent.c) or a [csv reader](code/process_input/process_input.c) 
+- Provides multiple activation and cost functions along with their derivatives
+- Current limitation: Only one output neuron is supported
+- Each file should include its dedicated test file
 
-**During normal running, the code folder may not be touched!**
+Note that this file should not be changed during normal excecution.
 
 ## Build folder
-The build folder simply holds the executables for the neural network. It has an own section for all testing executables.
+- Contains the compiled executables
+- Includes dedicated directory for testing executables
 
 
 # Implementation Details
 
 ## Gradient Descent
-The Neural Network uses basic gradient descent (first derivative) to update its weights and biases. For both, the learning rate is the same. During seeding, they are initialised to a random number.  
-Updates are performed in a big batch once for every epoch (after the entire training data has been run for the previous Network).
+- Optimisation is made using first order gradient descent
+- A uniform learning rate is used for both weights and biases
+- Parameters are initialised randomly during seeding
+- Updates to these parameters are performed in batches
+
 
 ## Optimisations
-To speed up the process, the training data is broken into smaller pieces and processed using multi-threading. Note, that only the [feed_forward](code/feed_forward/feed_forward.c) algorithm benefits from this speed-up, as it is the main bottleneck for big training datasets.  
-The code is optimised for cache sizes of 128 bytes (If necessary change CACHE_LINE_LENGTH in [config.h](configurations/config/config.h)).
+- Training data is partitioned into small batches for parallel execution
+- Multi-threading is implemented for the [feed_forward](code/feed_forward/feed_forward.c) algorithm, as it is the main bottleneck
+- Memory usage is optimised for CPU cache lines of 128 bytes (configurable via CACHE_LINE_LENGTH in [config.h](configurations/config/config.h))
 
 # Available functions
 

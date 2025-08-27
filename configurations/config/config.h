@@ -89,8 +89,8 @@ extern const char *FILENAME;
 */
 
 // 4.1 Activation function definition (a struct with activation function and its derivative)
-#define ACTIVATION_FUNCTION(input) sigmoid(input)
-#define ACTIVATION_FUNCTION_DER(input) der_sigmoid(input)
+#define ACTIVATION_FUNCTION(input) leaky_relu((input), 0.2)
+#define ACTIVATION_FUNCTION_DER(input) der_leaky_relu((input), 0.2)
 
 // 4.2 Cost function definition (a struct with activation function and its derivative) (currently not working for exponential cost)
 #define COST_FUNCTION(actual, pred) mean_squared_error((actual), (pred))

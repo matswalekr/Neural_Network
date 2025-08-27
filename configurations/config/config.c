@@ -17,5 +17,5 @@ const size_t NEURON_NUMBERS[NUMBER_LAYERS] = {3, NUM_OUTPUT};
 #if defined(DEMO) || defined(DEBUG)
 const char *FILENAME = "/Users/matswalker/Neural_Network/code/main/demo.csv";
 #else
-const char *FILENAME = NULL; // Set it to NULL at global scope and modiy later
+const char *FILENAME = NULL; // Set it to NULL at global scope and modify later
 #endif // DEMO
